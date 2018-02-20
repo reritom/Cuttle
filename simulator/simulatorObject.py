@@ -4,3 +4,6 @@ class simulationObject():
     '''
     def __init__(self):
         pass
+
+    def runRound(self):
+        pass

@@ -25,6 +25,7 @@ class DaisyChain():
                 bit = carry
                 self.last_carry = carry
 
+        # This loop part needs to be moved out of the component
         else:
             bit = self.last_carry
 
