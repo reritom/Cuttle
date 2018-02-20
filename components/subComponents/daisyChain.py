@@ -1,4 +1,4 @@
-from subComponents.shiftRegister import ShiftRegister
+from shiftRegister import ShiftRegister
 import time
 
 class DaisyChain():
@@ -13,6 +13,7 @@ class DaisyChain():
             self.registers.append(ShiftRegister())
 
         self.last_carry = 0
+        self.input_bit = None
 
     def shiftBit(self, bit):
         if bit not in [0, 1, None]:
@@ -61,6 +62,11 @@ class DaisyChain():
                     new.append(' ')
 
             print(new)
+
+    def runRound(self):
+        if self.input_bit is not None:
+            #Shift bit
+            self.input_bit = None
 
 
 def testDaisyChain():
