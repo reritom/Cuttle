@@ -15,12 +15,16 @@ class TrackDriver():
         if self.interrupt is not None:
             #Do stuff
             print(self.name)
-            print(self.daisy.getChain())
+            print("received: " + str(self.command_register))
+            #print(self.daisy.getChain())
             self.interrupt = None
         else:
             print(self.name)
             print("No interrupt")
-            print(self.daisy.getChain())
+            #print(self.daisy.getChain())
 
     def setInterrupt(self):
         self.interrupt = True
+
+    def setCommand(self, comList):
+        self.command_register = comList

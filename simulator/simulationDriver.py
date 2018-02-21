@@ -40,5 +40,5 @@ class SimulationDriver():
 
 if __name__ == '__main__':
     sim = SimulationDriver(rounds=20)
-    sim.addEvent(10, "GO")
+    sim.addEvent(10, "FS1000")
     sim.runSimulation()

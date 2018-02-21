@@ -7,26 +7,33 @@ class TrackManager():
     '''
     def __init__(self):
         self.incomingSerial = None
+        self.previousSerial = None
         self.trackDrivers = {'Portside': TrackDriver(name='Portside'),
                              'Starboard': TrackDriver(name='Starboard')}
-        self.previousSerial = None
-        pass
+
 
     def parseSerial(self):
         '''
             Parse the serial input
         '''
-        if self.incomingSerial == 'GO':
-            portsideCommand = '?'
-            #TODO create driverControl for each, then send the command into the driver buffers
-            return {'Portside':'FORWARD', 'Starboard':'FORWARD'}
+        if self.incomingSerial[:2] == 'FS':
+            speed = self.incomingSerial[2:]
+            speed = speed[:4]
 
+            portsideControl = DriverControl()
+            portsideControl.setActive()
+            portsideControl.setSpeed(speed)
+            portsideCommand = portsideControl.getBinary()
+            self.trackDrivers['Portside'].setCommand(portsideCommand)
+            self.trackDrivers['Portside'].setInterrupt()
 
-    def driverTransmission(self):
-        '''
-            This method takes the commands for the drivers and adds them to the input buffers
-            It then sets the interrupts
-        '''
+            starboardControl = DriverControl()
+            starboardControl.setActive()
+            starboardControl.setSpeed(speed)
+            starboardCommand = starboardControl.getBinary()
+            self.trackDrivers['Starboard'].setCommand(starboardCommand)
+            self.trackDrivers['Starboard'].setInterrupt()
+
 
     def runRound(self):
         '''
@@ -34,14 +41,7 @@ class TrackManager():
         '''
         if self.incomingSerial is not None:
             if self.incomingSerial != self.previousSerial:
-                #Do stuff
                 print("New incoming message detected")
-                pass
-
-
-            self.previousSerial = self.incomingSerial
+                self.parseSerial()
+                self.previousSerial = self.incomingSerial
             self.incomingSerial = None
-        # If serial, read it, else finish round
-
-        # parse the serial
-        pass
