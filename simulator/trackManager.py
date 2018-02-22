@@ -15,10 +15,17 @@ class TrackManager():
     def parseSerial(self):
         '''
             Parse the serial input
+            Message format: str "XXYYYY"
+            FS, FL, FR
+            RS, RL, RR
+            TR, TR
+            OX
         '''
         if self.incomingSerial[:2] == 'FS':
-            speed = self.incomingSerial[2:]
-            speed = speed[:4]
+            print("Message is forward command")
+            cutspeed = self.incomingSerial[2:]
+            cutspeed = cutspeed[:4]
+            speed = [int(i) for i in cutspeed]
 
             portsideControl = DriverControl()
             portsideControl.setActive()
