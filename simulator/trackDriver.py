@@ -18,6 +18,10 @@ class TrackDriver():
         # Used for simulation purposes
         self.name = name
 
+        self.status = 0
+        self.direction = 0
+        self.speed = 0
+
         # Two daisy chains
         self.daisies = {'Skyward': DaisyChain(number=3),
                         'Downward': DaisyChain(number=3)}
@@ -31,6 +35,7 @@ class TrackDriver():
             #Do stuff
             print(self.name)
             print("received: " + str(self.command_register.getBinary()))
+            self.parseCommand()
             self.interrupt = None
         else:
             print(self.name)
@@ -46,4 +51,23 @@ class TrackDriver():
         '''
             Read each bit to determine the action
         '''
+        if self.command_register.getActive() == 1:
+            self.status = 1
+        else:
+            #TODO run stop daisy cycling
+            return
+
+        if self.command_register.getReboot() == 1:
+            # Run reset of the daisy chains
+            return
+
+        if self.command_register.getDirection() != self.direction:
+            # Direction has changed
+            # Turn around daisy shift
+            # Continue
+
+        if self.command_register.getOverride() == 1:
+            # Treat following speed bits as multipliers
+
+        # Read speed and update
         pass
