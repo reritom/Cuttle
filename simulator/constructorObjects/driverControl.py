@@ -9,6 +9,7 @@ class DriverControl(object):
 
         '''
         The control register has 8 bits, with the following specs:
+        #TODO - change add 0-active, 1-direction, 2-override
 
         0 - Active/Inactive
         1 - Speed MSB
