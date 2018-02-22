@@ -9,16 +9,15 @@ class DriverControl(object):
 
         '''
         The control register has 8 bits, with the following specs:
-        #TODO - change add 0-active, 1-direction, 2-override
 
         0 - Active/Inactive
-        1 - Speed MSB
-        2 - Speed
-        3 - Speed
-        4 - Speed LSB
-        5 - Unspecified
-        6 - Unspecified
-        7 - Reboot
+        1 - Reboot
+        2 - Direction (1f, 0r)
+        3 - Override
+        4 - Speed MSB
+        5 - Speed
+        6 - Speed
+        7 - Speed LSB
         '''
 
     def setActive(self):
@@ -31,13 +30,26 @@ class DriverControl(object):
         '''
             This method sets the reboot pin
         '''
-        self.control[7] = 1
+        self.control[1] = 1
+
+    def setDirection(self):
+        '''
+            This method sets the direction bit, 1 for forward, 0 for reverse
+        '''
+        self.control[2] = 1
+
+    def setOverride(self):
+        '''
+            This method sets the override bit.
+            This is used for interpretting the speed bits as multipliers instead of set speeds
+        '''
+        self.control[3] = 1
 
     def setSpeed(self, speedString):
         '''
             The speed takes up 4 bits representing a value between 0-(2^4-1)
         '''
-        speedBits = [1, 2, 3, 4]
+        speedBits = [4, 5, 6, 7]
 
         for i in range(4):
             self.control[speedBits[i]] = int(speedString[i])
