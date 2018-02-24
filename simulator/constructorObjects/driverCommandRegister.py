@@ -1,4 +1,4 @@
-class DriverControl(object):
+class DriverCommandRegister(object):
     '''
         This class is used for creating an 8 bit binary message to shift to the driver
         representing commands
@@ -9,19 +9,19 @@ class DriverControl(object):
                             'Reboot': 0,
                             'Direction': 0,
                             'Override': 0,
-                            'SpeedMSB': 0,
-                            'SpeedMSM': 0,
-                            'SpeedLSM': 0,
-                            'SpeedLSB': 0}
+                            'FreeBit1': 0,
+                            'FreeBit2': 0,
+                            'FreeBit3': 0,
+                            'FreeBit4': 0}
 
         self.bit_order = ['Active',
                           'Reboot',
                           'Direction',
                           'Override',
-                          'SpeedMSB',
-                          'SpeedMSM',
-                          'SpeedLSM',
-                          'SpeedLSB']
+                          'FreeBit1',
+                          'FreeBit2',
+                          'FreeBit3',
+                          'FreeBit4']
 
         '''
         The control register has 8 bits, with the following specs:
@@ -30,10 +30,10 @@ class DriverControl(object):
         1 - Reboot
         2 - Direction (1f, 0r)
         3 - Override
-        4 - Speed MSB
-        5 - Speed
-        6 - Speed
-        7 - Speed LSB
+        4 - Unused
+        5 - Unused
+        6 - Unused
+        7 - Unused
         '''
 
     def setActive(self):
@@ -72,15 +72,6 @@ class DriverControl(object):
 
     def getOverride(self):
         return self.control_bits['Override']
-
-    def setSpeed(self, speed_string):
-        '''
-            The speed takes up 4 bits representing a value between 0-(2^4-1)
-        '''
-        self.control_bits['SpeedMSB'] = speed_string[0]
-        self.control_bits['SpeedMSM'] = speed_string[1]
-        self.control_bits['SpeedLSM'] = speed_string[2]
-        self.control_bits['SpeedLSB'] = speed_string[3]
 
     def getBinary(self):
         '''
