@@ -1,6 +1,7 @@
 from subComponents.daisyChain import DaisyChain
 from constructorObjects.driverCommandRegister import DriverCommandRegister
 from constructorObjects.driverSpeedRegister import DriverSpeedRegister
+from constructorObjects.wave import Wave
 
 class TrackDriver():
     '''
@@ -33,6 +34,8 @@ class TrackDriver():
         # Trit has 3 states, -1, 0, 1
         self.previous_trit = 0
         self.last_flip = 0
+        self.bits_since_command = 0
+        self.wave = Wave()
 
         # Two daisy chains
         self.daisies = {'Skyward': DaisyChain(number=3),
@@ -57,16 +60,47 @@ class TrackDriver():
             print("No interrupt")
 
         if self.status == 0:
-            pass
+            return
 
-        '''
+        trite = self.wave.getTrite()
+
         if self.direction == 1: # forward
-            previous = self.trit_array[0]
+            # Prepend bits
+            # Pop last bit
+            if trite == 1:
+                self.daisy_arrays['Skyward'].insert(0, trite)
+                self.daisy_arrays['Downward'].insert(0, 0)
+            elif trite == 0:
+                self.daisy_arrays['Skyward'].insert(0, 0)
+                self.daisy_arrays['Downward'].insert(0, 0)
+            elif trite == -1:
+                self.daisy_arrays['Skyward'].insert(0, 0)
+                self.daisy_arrays['Downward'].insert(0, trite)
+
+            carry_bit_sky = self.daisy_arrays['Skyward'].pop(-1)
+            carry_bit_down = self.daisy_arrays['Downward'].pop(-1)
 
         else:
-            previous = self.trit_array[-1]
+            # Reverse
+            # Get bit for each array
+            # Append bits to each, pop first from each
 
-        '''
+            if trite == 1:
+                self.daisy_arrays['Skyward'].append(trite)
+                self.daisy_arrays['Downward'].append(0)
+            elif trite == 0:
+                self.daisy_arrays['Skyward'].append(0)
+                self.daisy_arrays['Downward'].append(0)
+            elif trite == -1:
+                self.daisy_arrays['Skyward'].append(0)
+                self.daisy_arrays['Downward'].append(trite)
+
+            carry_bit_sky = self.daisy_arrays['Skyward'].pop(0)
+            carry_bit_down = self.daisy_arrays['Downward'].pop(0)
+
+        if self.name == "Starboard":
+            print("Skyward: " + str(self.daisy_arrays['Skyward']))
+            print("Downward: " + str(self.daisy_arrays['Downward']))
 
     def setInterrupt(self):
         self.interrupt = True
@@ -84,9 +118,10 @@ class TrackDriver():
         '''
         self.status = self.command_register.getActive()
 
-        self.reboot =  self.command_register.getReboot() == 1:
-            # Run reset of the daisy chains
-            return
+        self.reboot =  self.command_register.getReboot()
+        # Run reset of the daisy chains
+        # Do a "If reboot, at end of parse command, run reboot func"
+
 
         if self.command_register.getDirection() != self.direction:
             pass
@@ -99,6 +134,10 @@ class TrackDriver():
             # Treat following speed bits as multipliers
 
         # Read speed and update
-        speed = self.speed_register.getSpeed()
-        print("Speed read as " + str(speed))
-        pass
+        self.speed = self.speed_register.getSpeed()
+        print("Speed read as " + str(self.speed))
+
+        # Create the new Wave
+        self.wave.setSize(6)
+        self.wave.setPulseWidth()
+        self.wave.createWave()
