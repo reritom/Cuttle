@@ -16,11 +16,9 @@ class TrackManager():
     def parseSerial(self):
         '''
             Parse the serial input
-            Message format: str "XXYYY"
-            FS, FL, FR
-            RS, RL, RR
-            TR, TR
-            OX
+            Message format: str "XXYYY:ZZAAA"
+            SF (fwd), SR (rev), SM (flt), SN (ntl), SX (overload)
+            PF, PR, PM, PN, PX
         '''
         # Split the message by ':'
         commands = self.incomingSerial.split(':')
@@ -57,19 +55,36 @@ class TrackManager():
 
         if speed == 0:
             return command_register, speed_register
+        elif speed > 100:
+            print("Speed to high")
+            raise Exception
         else:
             command_register.setActive()
             speed_register.setSpeed(speed)
 
-        # Check that the second character is a valid command
-        if command[1] not in ['F', 'O', 'R']:
+
+        # Direction commands which have a default mode of SC (speed change)
+        if command[1] == 'F':
+            command_register.setDirection('Fwd')
+        elif command[1] == 'R':
+            command_register.setDirection('Rev')
+        elif command[1] == 'M':
+            command_register.setDirection('Flt')
+        elif command[1] == 'N':
+            command_register.setDirection('Ntl')
+        # Alternative modes for changing wave attributes
+        elif command[1] == '0':
+            command_register.setMode('OM') # Override multiplier
+        elif command[1] == 'S':
+            command_register.setMode('SC') # Speed change
+        elif command[1] == 'W':
+            command_register.setMode('WC') # Pulse change
+        elif command[1] == 'T':
+            command_register.setMode('FC') # Frequency/width change
+        else:
             print("Invalid command second char")
             raise Exception
-        else:
-            if command[1] == 'F':
-                command_register.setDirection()
-            elif command[1] == '0':
-                command_register.setOverride()
+
 
         return command_register, speed_register
 

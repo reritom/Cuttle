@@ -17,7 +17,7 @@ class SimulationDriver():
         manager = TrackManager()
 
         self.components = {'Manager': manager,
-                           'PortDriver': manager.trackDrivers['Portside'],
+                           #'PortDriver': manager.trackDrivers['Portside'],
                            'StarDriver': manager.trackDrivers['Starboard']}
 
     def addEvent(self, at, action):
@@ -40,5 +40,8 @@ class SimulationDriver():
 
 if __name__ == '__main__':
     sim = SimulationDriver(rounds=30)
-    sim.addEvent(10, "SF100")
+    sim.addEvent(10, "ST050") #Frequency (will default to 10 bit half wave size)
+    sim.addEvent(11, "SW050") #50% pwm
+    sim.addEvent(12, "SR050") #Change direction and reduce speed
+
     sim.runSimulation()

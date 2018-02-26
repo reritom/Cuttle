@@ -25,17 +25,18 @@ class TrackDriver():
 
         # Previous command information
         self.status = 0
-        self.direction = 1 #Default forward
-        self.speed = 0
+        self.direction = 'Fwd' # Default forward
+        self.speed = 1 # Seconds between daisychain updates
 
         # Number of bits until the bit flips
-        self.frequency = 2
+        self.frequency = 2 # Wave size is twice the frequency
 
         # Trit has 3 states, -1, 0, 1
         self.previous_trit = 0
         self.last_flip = 0
         self.bits_since_command = 0
         self.wave = Wave()
+        self.wave.createWave()
 
         # Two daisy chains
         self.daisies = {'Skyward': DaisyChain(number=3),
@@ -64,7 +65,7 @@ class TrackDriver():
 
         trite = self.wave.getTrite()
 
-        if self.direction == 1: # forward
+        if self.direction == 'Fwd': # forward
             # Prepend bits
             # Pop last bit
             if trite == 1:
@@ -80,7 +81,7 @@ class TrackDriver():
             carry_bit_sky = self.daisy_arrays['Skyward'].pop(-1)
             carry_bit_down = self.daisy_arrays['Downward'].pop(-1)
 
-        else:
+        elif self.direction == 'Rev':
             # Reverse
             # Get bit for each array
             # Append bits to each, pop first from each
@@ -97,6 +98,19 @@ class TrackDriver():
 
             carry_bit_sky = self.daisy_arrays['Skyward'].pop(0)
             carry_bit_down = self.daisy_arrays['Downward'].pop(0)
+
+        elif self.direction == 'Flt':
+            # Inject two same bits in the centre
+            # Pop the beginning and end bits
+            pass
+
+        elif self.direction == 'Ntl':
+            # Neutral direction means no movement, end round
+            return
+
+        else:
+            print("Unsupported direction: " + self.direction)
+            raise Exception
 
         if self.name == "Starboard":
             print("Skyward: " + str(self.daisy_arrays['Skyward']))
@@ -117,27 +131,48 @@ class TrackDriver():
             Read each bit to determine the action
         '''
         self.status = self.command_register.getActive()
-
-        self.reboot =  self.command_register.getReboot()
-        # Run reset of the daisy chains
-        # Do a "If reboot, at end of parse command, run reboot func"
+        if self.status == 0:
+            return
 
 
-        if self.command_register.getDirection() != self.direction:
-            pass
-            # Direction has changed
-            # Turn around daisy shift
-            # Continue
+        if self.command_register.getReboot() == 1:
+            # TODO
+            # Run reset of the daisy chains
+            # Do a "If reboot, at end of parse command, run reboot func"
+            return
 
-        if self.command_register.getOverride() == 1:
-            pass
-            # Treat following speed bits as multipliers
+        if self.command_register.getDefault() == 1:
+            # This is a speed change command
+            # Ignore other mode change bits
+            # Get the direction
+            self.direction = self.command_register.getDirection()
+            self.speed = self.speed_register.getSpeed()
+            return
 
-        # Read speed and update
-        self.speed = self.speed_register.getSpeed()
-        print("Speed read as " + str(self.speed))
-
-        # Create the new Wave
-        self.wave.setSize(6)
-        self.wave.setPulseWidth()
-        self.wave.createWave()
+        mode =  self.command_register.getMode()
+        if mode == 'OM':
+            # Override ignores direction changes, it is applied to the current direction
+            # Read speed, treat them as multipliers, run override routine, return to loop
+            override = self.speed_register.getSpeed() / 50 # Value between 0-2
+            self.speed = self.speed*override
+            return
+        elif mode == 'FC':
+            # Its a frequency change
+            frequency = self.speed_register.getSpeed()
+            if frequency > 10:
+                print("Frequency too high, using 10f instead")
+                frequency = 10
+            self.frequency = frequency
+            self.wave.setSize(self.frequency*2)
+            self.wave.createWave()
+            return
+        elif mode == 'WC':
+            # Wave shape change
+            # Read speed as a pwm type
+            pwm_percent = self.speed_register.getSpeed()
+            self.wave.setPulseWidth(pwm_percent)
+            self.wave.createWave()
+            return
+        else:
+            print("Not yet supported mode: " + mode)
+            raise Exception

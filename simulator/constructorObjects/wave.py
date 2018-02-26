@@ -3,6 +3,7 @@ class Wave():
         self.wave = []
         self.pulse_size = 100 # Percent
         self.stage = 0 # Value between 0 and the size of the wave
+        self.size = 6 # Default value, freq is 3
 
     def setSize(self, size):
         '''
@@ -25,6 +26,12 @@ class Wave():
         '''
             This method creates the wave
         '''
+        # Reset wave
+        self.wave = []
+
+        # Reset the stage counter
+        self.stage = 0
+
         # Number of bits in half a wave
         halfwave = int(self.size / 2)
 
