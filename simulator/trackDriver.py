@@ -22,19 +22,23 @@ class TrackDriver():
 
         # Used for simulation purposes
         self.name = name
+        self.time_sls = 0 # Time since last shift in microseconds
 
         # Previous command information
         self.status = 0
         self.direction = 'Fwd' # Default forward
-        self.speed = 1 # Seconds between daisychain updates
+        self.speed = 100 # Somewhat arbritrary
+
+        # Speed is inversely mapped to the time taken between shifting out the new array
+        '''
+        speed_downscale = (self.speed / 5) # Typical range of 0-20
+        time_between_shifts = (1 second / speed_downscale)*1000 to convert to milliseconds
+        '''
 
         # Number of bits until the bit flips
         self.frequency = 2 # Wave size is twice the frequency
 
-        # Trit has 3 states, -1, 0, 1
-        self.previous_trit = 0
-        self.last_flip = 0
-        self.bits_since_command = 0
+        # The waveform to be shifted
         self.wave = Wave()
         self.wave.createWave()
 
@@ -48,19 +52,23 @@ class TrackDriver():
 
         self.trit_array = [0 for i in range(3*8)]
 
-    def runRound(self):
+    def runRound(self, delta):
         if self.interrupt is not None:
             #Do stuff
             print(self.name)
             print("received: " + str(self.command_register.getBinary()))
             self.parseCommand()
             self.interrupt = None
+            self.time_sls = 0
         else:
             pass
-            print(self.name)
-            print("No interrupt")
 
         if self.status == 0:
+            return
+
+        self.time_sls += delta
+        print("Time since last shift: " + str(self.time_sls))
+        if not self.time_sls < (1/(self.speed/5))*1000000:
             return
 
         trite = self.wave.getTrite()
@@ -112,6 +120,8 @@ class TrackDriver():
             print("Unsupported direction: " + self.direction)
             raise Exception
 
+        self.time_sls = 0
+
         if self.name == "Starboard":
             print("Skyward: " + str(self.daisy_arrays['Skyward']))
             print("Downward: " + str(self.daisy_arrays['Downward']))
@@ -147,6 +157,9 @@ class TrackDriver():
             # Get the direction
             self.direction = self.command_register.getDirection()
             self.speed = self.speed_register.getSpeed()
+
+            if self.speed == 0:
+                self.speed = 1
             return
 
         mode =  self.command_register.getMode()
