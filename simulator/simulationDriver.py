@@ -49,7 +49,7 @@ class SimulationDriver():
 
 
 if __name__ == '__main__':
-    sim = SimulationDriver(duration=10)
+    sim = SimulationDriver(duration=100)
     sim.addEvent(5, "ST050") #Frequency (will default to 10 bit half wave size)
     sim.addEvent(10, "SW050") #50% pwm
     sim.addEvent(15, "SR050") #Change direction and reduce speed

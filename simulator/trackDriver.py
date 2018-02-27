@@ -67,8 +67,7 @@ class TrackDriver():
             return
 
         self.time_sls += delta
-        print("Time since last shift: " + str(self.time_sls))
-        if not self.time_sls < (1/(self.speed/5))*1000000:
+        if self.time_sls < (1/(self.speed/5)):
             return
 
         trite = self.wave.getTrite()
