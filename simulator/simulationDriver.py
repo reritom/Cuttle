@@ -35,7 +35,7 @@ class SimulationDriver():
         current_time = start_time
         previous_time = start_time
 
-        while current_time - start_time < self.duration * 1000000:
+        while current_time - start_time < self.duration:
             if self.events and self.events[0][0] < current_time - start_time:
                 self.components['Manager'].incomingSerial = self.events[0][1]
                 self.events.pop(0)
@@ -45,6 +45,7 @@ class SimulationDriver():
 
             previous_time = current_time
             current_time = time.time()
+
 
 
 if __name__ == '__main__':
