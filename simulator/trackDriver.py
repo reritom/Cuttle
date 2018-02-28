@@ -64,14 +64,16 @@ class TrackDriver():
             pass
 
         if self.status == 0:
-            return
+            return {"Skyward": self.daisy_arrays['Skyward'], "Downward": self.daisy_arrays['Downward']}
+
 
         self.time_sls += delta
         if self.time_sls < (1/(self.speed/5)):
-            return
+            #print("Time since last shift is ..")
+            return {"Skyward": self.daisy_arrays['Skyward'], "Downward": self.daisy_arrays['Downward']}
 
         trite = self.wave.getTrite()
-
+        print(self.name + " " + str((1/(self.speed/5))))
         if self.direction == 'Fwd': # forward
             # Prepend bits
             # Pop last bit
@@ -121,9 +123,14 @@ class TrackDriver():
 
         self.time_sls = 0
 
-        if self.name == "Starboard":
+        #print("name:" + self.name + " logs: " + str(logs))
+        logs = False
+        if self.name == "Starboard" and logs:
             print("Skyward: " + str(self.daisy_arrays['Skyward']))
             print("Downward: " + str(self.daisy_arrays['Downward']))
+
+
+        return {"Skyward": self.daisy_arrays['Skyward'], "Downward": self.daisy_arrays['Downward']}
 
     def setInterrupt(self):
         self.interrupt = True

@@ -9,7 +9,7 @@ class TrackManager():
     def __init__(self):
         self.incomingSerial = None
         self.previousSerial = None
-        self.trackDrivers = {#'Portside': TrackDriver(name='Portside'),
+        self.trackDrivers = {'Portside': TrackDriver(name='Portside'),
                              'Starboard': TrackDriver(name='Starboard')}
 
 
@@ -32,7 +32,7 @@ class TrackManager():
                 self.trackDrivers['Starboard'].setSpeed(speed_register.getBinary())
                 self.trackDrivers['Starboard'].setInterrupt()
 
-            '''
+
             # Portside commands
             if this_command.startswith('P'):
                 print("Message received for Portside driver")
@@ -40,7 +40,7 @@ class TrackManager():
                 self.trackDrivers['Portside'].setCommand(command_register.getBinary())
                 self.trackDrivers['Portside'].setSpeed(speed_register.getBinary())
                 self.trackDrivers['Portside'].setInterrupt()
-            '''
+
 
     def createRegisters(self, command):
         '''
@@ -94,6 +94,7 @@ class TrackManager():
         '''
             This method processes the current round in the loop
         '''
+
         if self.incomingSerial is not None:
             if self.incomingSerial != self.previousSerial:
                 print("New incoming message detected")
