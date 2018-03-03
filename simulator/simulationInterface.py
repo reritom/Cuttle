@@ -10,11 +10,11 @@ class logAnimator():
 
     def runSimulation(self):
         print("Running sim")
-        sim = SimulationDriver(duration=10, sampling=0.5)
-        #sim.addEvent(5, "ST050:PR100") #Frequency (will default to 10 bit half wave size)
-        #sim.addEvent(10, "SW050") #50% pwm
-        #sim.addEvent(15, "SR050") #Change direction and reduce speed
-        sim.addEvent(0, "SM005") # Float movement
+        sim = SimulationDriver(duration=20, sampling=0.04)
+        sim.addEvent(5, "ST050:PR100") #Frequency (will default to 10 bit half wave size)
+        sim.addEvent(10, "SW050") #50% pwm
+        sim.addEvent(15, "SR050") #Change direction and reduce speed
+        #sim.addEvent(0, "SM050") # Float movement
         sim.runSimulation()
         self.logs = sim.getLogs()
 
@@ -38,7 +38,7 @@ class logAnimator():
 
         # call the animator.  blit=True means only re-draw the parts that have changed.
         anim = animation.FuncAnimation(fig, self.animate, init_func=self.init,
-                               frames=len(self.logs), interval=500, blit=True)
+                               frames=len(self.logs), interval=40, blit=True)
 
         plt.show()
         '''
@@ -59,11 +59,8 @@ class logAnimator():
         '''
 
     def animate(self, i):
-        print("In animate")
         y = self.logs[i]['StarboardSky']
         x = [i for i in range(24)]
-        print("x: " + str(x))
-        #print("y: " + str(y))
         self.line.set_data(x, y)
         return self.line,
 

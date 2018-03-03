@@ -7,5 +7,9 @@
   If it is XOR, the fin will either move up or down
 '''
 class Fin():
-  __init__(self):
-    pass
+    def __init__(self):
+        self.propagation_time = 1 # seconds
+        self.propagation_type = 'Linear' # 'Exp'
+        self.max_angle = 45 # degrees
+        self.length = 20 # centimetres
+        pass
