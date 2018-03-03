@@ -3,6 +3,8 @@ from constructor_objects.driverCommandRegister import DriverCommandRegister
 from constructor_objects.driverSpeedRegister import DriverSpeedRegister
 from constructor_objects.wave import Wave
 
+import copy
+
 class TrackDriver():
     '''
         This class reads from the command register and shifts out bits to control the track relays
@@ -64,13 +66,13 @@ class TrackDriver():
             pass
 
         if self.status == 0:
-            return {"Skyward": self.daisy_arrays['Skyward'], "Downward": self.daisy_arrays['Downward']}
+            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward'])
 
 
         self.time_sls += delta
         if self.time_sls < (1/(self.speed/5)):
             #print("Time since last shift is ..")
-            return {"Skyward": self.daisy_arrays['Skyward'], "Downward": self.daisy_arrays['Downward']}
+            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward'])
 
         trite = self.wave.getTrite()
 
@@ -110,9 +112,34 @@ class TrackDriver():
 
         elif self.direction == 'Flt':
             # Inject two same bits in the centre
-            # Pop the beginning and end bits
-            pass
+            center_element = int(len(self.daisy_arrays['Skyward']) / 2)
 
+            if trite == 1:
+                self.daisy_arrays['Skyward'].insert(center_element, trite)
+                self.daisy_arrays['Skyward'].insert(center_element, trite)
+                self.daisy_arrays['Downward'].insert(center_element, 0)
+                self.daisy_arrays['Downward'].insert(center_element, 0)
+            elif trite == 0:
+                self.daisy_arrays['Skyward'].insert(center_element, 0)
+                self.daisy_arrays['Skyward'].insert(center_element, 0)
+                self.daisy_arrays['Downward'].insert(center_element, 0)
+                self.daisy_arrays['Downward'].insert(center_element, 0)
+            elif trite == -1:
+                self.daisy_arrays['Skyward'].insert(center_element, 0)
+                self.daisy_arrays['Skyward'].insert(center_element, 0)
+                self.daisy_arrays['Downward'].insert(center_element, trite)
+                self.daisy_arrays['Downward'].insert(center_element, trite)
+
+            # Pop the beginning and end bits
+            carry_bit_sky = self.daisy_arrays['Skyward'].pop(0)
+            carry_bit_down = self.daisy_arrays['Downward'].pop(0)
+
+            carry_bit_sky = self.daisy_arrays['Skyward'].pop(-1)
+            carry_bit_down = self.daisy_arrays['Downward'].pop(-1)
+            '''
+            if self.name == "Starboard":
+                print(self.daisy_arrays['Skyward'])
+            '''
         elif self.direction == 'Ntl':
             # Neutral direction means no movement, end round
             return
@@ -122,15 +149,7 @@ class TrackDriver():
             raise Exception
 
         self.time_sls = 0
-
-        #print("name:" + self.name + " logs: " + str(logs))
-        logs = False
-        if self.name == "Starboard" and logs:
-            print("Skyward: " + str(self.daisy_arrays['Skyward']))
-            print("Downward: " + str(self.daisy_arrays['Downward']))
-
-
-        return {"Skyward": self.daisy_arrays['Skyward'], "Downward": self.daisy_arrays['Downward']}
+        return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward'])
 
     def setInterrupt(self):
         self.interrupt = True

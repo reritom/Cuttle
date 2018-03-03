@@ -57,15 +57,21 @@ class SimulationDriver():
             # If it is time to sample
             if time_since_last_sample > self.sampling:
                 print("Time to sample")
-                this_log = []
-                this_log.append(current_time - start_time)
-                comp_logs = {}
+                this_log = dict()
+                this_log['time'] = current_time - start_time
 
                 self.components['Manager'].runRound(delta=delta)
-                comp_logs['Starboard'] = self.components['StarDriver'].runRound(delta=delta)
-                comp_logs['Portside'] = self.components['PortDriver'].runRound(delta=delta)
-                this_log.append(comp_logs)
+                StarboardSky, StarboardDown = self.components['StarDriver'].runRound(delta=delta)
+                PortsideSky, PortsideDown = self.components['PortDriver'].runRound(delta=delta)
+
+                this_log['StarboardSky'] = StarboardSky
+                this_log['StarboardDown'] = StarboardDown
+                this_log['PortsideSky'] = PortsideSky
+                this_log['PortsideDown'] = PortsideDown
+
+                #print(this_log)
                 self.logs.append(this_log)
+                print(self.logs[-1])
                 time_since_last_sample = 0
             else:
                 # Run round without collecting logs
@@ -81,6 +87,7 @@ class SimulationDriver():
 
         mydict_as_string = cPickle.dumps(self.logs)
         print(sys.getsizeof(mydict_as_string))
+
 
 if __name__ == '__main__':
     sim = SimulationDriver(duration=20, sampling=1) #0.04

@@ -1,4 +1,4 @@
-from subComponents.shiftRegister import ShiftRegister
+from sub_components.shiftRegister import ShiftRegister
 import time
 
 class DaisyChain():

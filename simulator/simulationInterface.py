@@ -6,20 +6,23 @@ import numpy as np
 class logAnimator():
     def __init__(self):
         self.logs = []
-        pass
+        print("In init")
 
     def runSimulation(self):
-        sim = SimulationDriver(duration=20, sampling=1)
-        sim.addEvent(5, "ST050:PR100") #Frequency (will default to 10 bit half wave size)
-        sim.addEvent(10, "SW050") #50% pwm
-        sim.addEvent(15, "SR050") #Change direction and reduce speed
+        print("Running sim")
+        sim = SimulationDriver(duration=10, sampling=0.5)
+        #sim.addEvent(5, "ST050:PR100") #Frequency (will default to 10 bit half wave size)
+        #sim.addEvent(10, "SW050") #50% pwm
+        #sim.addEvent(15, "SR050") #Change direction and reduce speed
+        sim.addEvent(0, "SM005") # Float movement
         sim.runSimulation()
-
         self.logs = sim.getLogs()
 
     def animateLogs(self):
         '''
             This method animates the simulation logs
+        '''
+        print("Animating logs")
         '''
         # First set up the figure, the axis, and the plot element we want to animate
         fig = plt.figure()
@@ -37,15 +40,22 @@ class logAnimator():
                                frames=200, interval=20, blit=True)
 
         plt.show()
-
+        '''
         for log in self.logs:
-            Time = log[0]
-            PortsideSky = log[1]['Portside']['Skyward']
-            PortsideDown = log[1]['Portside']['Downward']
-            StarboardSky = log[1]['Starboard']['Skyward']
-            StarboardSky = log[1]['Starboard']['Downward']
+            time = log['time']
+            PortsideSky = log['PortsideSky']
+            PortsideDown = log['PortsideDown']
+            StarboardSky = log['StarboardSky']
+            StarboardDown = log['StarboardDown']
+            #print(time)
             print(PortsideSky)
-        pass
+            print(PortsideDown)
+            print(StarboardSky)
+            print(StarboardDown)
+            print("..")
+
+        #print(self.logs)
+
 
     def animate(self, i):
         print(i)
@@ -60,5 +70,5 @@ class logAnimator():
 
 if __name__ == '__main__':
     ani = logAnimator()
-    #ani.runSimulation()
+    ani.runSimulation()
     ani.animateLogs()
