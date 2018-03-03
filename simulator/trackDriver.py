@@ -1,7 +1,7 @@
-from subComponents.daisyChain import DaisyChain
-from constructorObjects.driverCommandRegister import DriverCommandRegister
-from constructorObjects.driverSpeedRegister import DriverSpeedRegister
-from constructorObjects.wave import Wave
+from sub_components.daisyChain import DaisyChain
+from constructor_objects.driverCommandRegister import DriverCommandRegister
+from constructor_objects.driverSpeedRegister import DriverSpeedRegister
+from constructor_objects.wave import Wave
 
 class TrackDriver():
     '''
@@ -73,7 +73,7 @@ class TrackDriver():
             return {"Skyward": self.daisy_arrays['Skyward'], "Downward": self.daisy_arrays['Downward']}
 
         trite = self.wave.getTrite()
-        print(self.name + " " + str((1/(self.speed/5))))
+
         if self.direction == 'Fwd': # forward
             # Prepend bits
             # Pop last bit

@@ -56,17 +56,14 @@ class SimulationDriver():
 
             # If it is time to sample
             if time_since_last_sample > self.sampling:
+                print("Time to sample")
                 this_log = []
                 this_log.append(current_time - start_time)
                 comp_logs = {}
 
                 self.components['Manager'].runRound(delta=delta)
-                comp_logs['star'] = self.components['StarDriver'].runRound(delta=delta)
-                comp_logs['port'] = self.components['PortDriver'].runRound(delta=delta)
-                print(comp_logs['port']['Downward'])
-                print(comp_logs['port']['Skyward'])
-                print("...")
-                #comp_logs['port'] = self.components['PortDriver'].runRound(delta=delta)
+                comp_logs['Starboard'] = self.components['StarDriver'].runRound(delta=delta)
+                comp_logs['Portside'] = self.components['PortDriver'].runRound(delta=delta)
                 this_log.append(comp_logs)
                 self.logs.append(this_log)
                 time_since_last_sample = 0
@@ -86,7 +83,7 @@ class SimulationDriver():
         print(sys.getsizeof(mydict_as_string))
 
 if __name__ == '__main__':
-    sim = SimulationDriver(duration=100, sampling=0.04)
+    sim = SimulationDriver(duration=20, sampling=1) #0.04
     sim.addEvent(5, "ST050:PR100") #Frequency (will default to 10 bit half wave size)
     sim.addEvent(10, "SW050") #50% pwm
     sim.addEvent(15, "SR050") #Change direction and reduce speed

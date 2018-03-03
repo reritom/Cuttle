@@ -1,6 +1,6 @@
 from trackDriver import TrackDriver
-from constructorObjects.driverCommandRegister import DriverCommandRegister
-from constructorObjects.driverSpeedRegister import DriverSpeedRegister
+from constructor_objects.driverCommandRegister import DriverCommandRegister
+from constructor_objects.driverSpeedRegister import DriverSpeedRegister
 
 class TrackManager():
     '''
