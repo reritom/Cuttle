@@ -23,10 +23,11 @@ class logAnimator():
             This method animates the simulation logs
         '''
         print("Animating logs")
-        '''
+        self.frame_count = 0
+
         # First set up the figure, the axis, and the plot element we want to animate
         fig = plt.figure()
-        ax = plt.axes(xlim=(0, 24), ylim=(-2, 2))
+        ax = plt.axes(xlim=(0, 3*8), ylim=(-2, 2))
         self.line, = ax.plot([], [], lw=2)
 
         # initialization function: plot the background of each frame
@@ -37,7 +38,7 @@ class logAnimator():
 
         # call the animator.  blit=True means only re-draw the parts that have changed.
         anim = animation.FuncAnimation(fig, self.animate, init_func=self.init,
-                               frames=200, interval=20, blit=True)
+                               frames=len(self.logs), interval=500, blit=True)
 
         plt.show()
         '''
@@ -55,12 +56,14 @@ class logAnimator():
             print("..")
 
         #print(self.logs)
-
+        '''
 
     def animate(self, i):
-        print(i)
-        x = np.linspace(0, 24)
-        y = np.sin(2 * np.pi * (x - 0.01 * i))
+        print("In animate")
+        y = self.logs[i]['StarboardSky']
+        x = [i for i in range(24)]
+        print("x: " + str(x))
+        #print("y: " + str(y))
         self.line.set_data(x, y)
         return self.line,
 
