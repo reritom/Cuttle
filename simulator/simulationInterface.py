@@ -10,9 +10,12 @@ class logAnimator():
         print("In init")
 
     def runSimulation(self):
-        print("Running sim")
-        sim = SimulationDriver(duration=60, sampling=0.04)
-
+        '''
+            This method creates the simulation object, adds the events,
+            runs the simulation, and returns the logs
+        '''
+        print("Running simulation")
+        sim = SimulationDriver(duration=60, sampling=CONFIG['SampleRate'] / 1000)
 
         sim.addEvent(5, "ST050:PR100") #Frequency (will default to 10 bit half wave size)
         sim.addEvent(10, "SW050") #50% pwm
@@ -42,11 +45,6 @@ class logAnimator():
         sim.addEvent(15, "ST100")
         '''
 
-        '''
-        sim.addEvent(1, "SF050")
-        sim.addEvent(5, "ST100")
-        '''
-
         sim.runSimulation()
         self.logs = sim.getLogs()
         self.lines = []
@@ -56,62 +54,39 @@ class logAnimator():
             This method animates the simulation logs
         '''
         print("Animating logs")
-        self.frame_count = 0
 
-        # First set up the figure, the axis, and the plot element we want to animate
-
-        '''
-        fig = plt.figure()
-        ax = plt.axes(xlim=(0, CONFIG['DaisyChainSize']*8), ylim=(-2, 2))
-
-        for i in range(2):
-            self.lines.append(ax.plot([], [], lw=2)[0])
-        '''
-
-        # initialization function: plot the background of each frame
         fig = plt.figure()
         ax1 = fig.add_subplot(2,1,1)
         ax2 = fig.add_subplot(2,1,2)
 
         ax1.set_xlim([0, CONFIG['DaisyChainSize']*8])
         ax1.set_ylim([-2, 2])
+        ax1.set_title("Starboard Track")
 
         ax2.set_xlim([0, CONFIG['DaisyChainSize']*8])
         ax2.set_ylim([-2, 2])
+        ax2.set_title("Portside Track")
 
-
+        # Create two lines for ax1
         for i in range(2):
             self.lines.append(ax1.plot([], [], lw=2)[0])
 
+        # Create two lines for ax2
         for i in range(2):
             self.lines.append(ax2.plot([], [], lw=2)[0])
-        # animation function.  This is called sequentially
 
 
-        # call the animator.  blit=True means only re-draw the parts that have changed.
+        # Call the animator.  blit=True means only re-draw the parts that have changed.
         anim = animation.FuncAnimation(fig, self.animate, init_func=self.init,
-                               frames=len(self.logs), interval=40, blit=True)
+                               frames=len(self.logs), interval=CONFIG['SampleRate'], blit=True)
 
         plt.show()
-        '''
-        for log in self.logs:
-            time = log['time']
-            PortsideSky = log['PortsideSky']
-            PortsideDown = log['PortsideDown']
-            StarboardSky = log['StarboardSky']
-            StarboardDown = log['StarboardDown']
-            #print(time)
-            print(PortsideSky)
-            print(PortsideDown)
-            print(StarboardSky)
-            print(StarboardDown)
-            print("..")
-
-        #print(self.logs)
-        '''
 
     def animate(self, i):
-
+        '''
+            This method updates each of the log lines
+            :param i: an auto-incrementing counter
+        '''
         x = [i for i in range(CONFIG['DaisyChainSize'] * 8)]
 
         starsky_y = self.logs[i]['StarboardSky']

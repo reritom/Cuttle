@@ -10,7 +10,7 @@ class SimulationDriver():
     def __init__(self, duration, sampling):
         self.createObject()
         self.duration = duration
-        self.sampling = sampling
+        self.sampling = sampling # Sample rate in seconds
         self.logs = []
         self.events = []
 
