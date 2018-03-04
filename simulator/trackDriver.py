@@ -2,7 +2,7 @@ from sub_components.daisyChain import DaisyChain
 from constructor_objects.driverCommandRegister import DriverCommandRegister
 from constructor_objects.driverSpeedRegister import DriverSpeedRegister
 from constructor_objects.wave import Wave
-
+from config import CONFIG
 import copy
 
 class TrackDriver():
@@ -45,14 +45,14 @@ class TrackDriver():
         self.wave.createWave()
 
         # Two daisy chains
-        self.daisies = {'Skyward': DaisyChain(number=3),
-                        'Downward': DaisyChain(number=3)}
+        self.daisies = {'Skyward': DaisyChain(number=CONFIG['DaisyChainSize']),
+                        'Downward': DaisyChain(number=CONFIG['DaisyChainSize'])}
 
         # For storing the values of the daisies
-        self.daisy_arrays = {'Skyward': [0 for i in range(3*8)],
-                             'Downward': [0 for i in range(3*8)]}
+        self.daisy_arrays = {'Skyward': [0 for i in range(CONFIG['DaisyChainSize'] * 8)],
+                             'Downward': [0 for i in range(CONFIG['DaisyChainSize'] * 8)]}
 
-        self.trit_array = [0 for i in range(3*8)]
+        self.trit_array = [0 for i in range(CONFIG['DaisyChainSize'] * 8)]
 
     def runRound(self, delta):
         if self.interrupt is not None:
@@ -70,7 +70,7 @@ class TrackDriver():
 
 
         self.time_sls += delta
-        if self.time_sls < (1/(self.speed/5)):
+        if self.time_sls < (1/(self.speed)):
             #print("Time since last shift is ..")
             return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward'])
 

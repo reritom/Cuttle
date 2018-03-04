@@ -1,24 +1,26 @@
-from matplotlib import pyplot as plt
-from matplotlib import animation
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
-fig = plt.figure()
+data=np.random.rand(4, 50, 150)
+Z=np.arange(0,120,.8)
 
-ax = plt.axes(xlim=(0, 2), ylim=(0, 100))
+fig, axes = plt.subplots(2,2)
 
-N = 4
-lines = [plt.plot([], [])[0] for _ in range(N)]
+lines=[]
 
-def init():
-    for line in lines:
-        line.set_data([], [])
+for nd, ax in enumerate(axes.flatten()):
+    l, = ax.plot(data[nd,0], Z)
+    lines.append(l)
+
+def run(it):
+    print(it)
+    for nd, line in enumerate(lines):
+        line.set_data(data[nd, it], Z)
     return lines
 
-def animate(i):
-    for j,line in enumerate(lines):
-        line.set_data([0, 2], [10 * j,i])
-    return lines
 
-anim = animation.FuncAnimation(fig, animate, init_func=init,
-                               frames=100, interval=20, blit=True)
+ani=animation.FuncAnimation(fig, run, frames=np.arange(0,data.shape[1]),
+                            interval=30, blit=True)
 
 plt.show()
