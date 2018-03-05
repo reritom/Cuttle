@@ -1,4 +1,4 @@
-from simulationDriver import SimulationDriver
+from simulation_driver import SimulationDriver
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from config import CONFIG

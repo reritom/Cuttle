@@ -1,6 +1,6 @@
-from sub_components.daisyChain import DaisyChain
-from constructor_objects.driverCommandRegister import DriverCommandRegister
-from constructor_objects.driverSpeedRegister import DriverSpeedRegister
+from sub_components.daisy_chain import DaisyChain
+from constructor_objects.driver_command_register import DriverCommandRegister
+from constructor_objects.driver_speed_register import DriverSpeedRegister
 from constructor_objects.wave import Wave
 from config import CONFIG
 import copy

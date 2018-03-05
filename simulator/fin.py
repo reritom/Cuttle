@@ -13,3 +13,6 @@ class Fin():
         self.max_angle = 45 # degrees
         self.length = 20 # centimetres
         pass
+
+    def runRound(self):
+        pass
