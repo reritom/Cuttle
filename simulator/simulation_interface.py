@@ -15,16 +15,17 @@ class logAnimator():
             runs the simulation, and returns the logs
         '''
         print("Running simulation")
-        sim = SimulationDriver(duration=60, sampling=CONFIG['SampleRate'] / 1000)
+        sim = SimulationDriver(duration=20, sampling=CONFIG['SampleRate'] / 1000)
 
-        sim.addEvent(5, "ST050:PR100") #Frequency (will default to 10 bit half wave size)
+        sim.addEvent(5, "SF050:PR100") #Frequency (will default to 10 bit half wave size)
+        '''
         sim.addEvent(10, "SW050") #50% pwm
         sim.addEvent(15, "SR050") #Change direction and reduce speed
         sim.addEvent(20, "SM100") # Float movement
         sim.addEvent(25, "SW010")
         sim.addEvent(30, "SW100")
         sim.addEvent(35, "SF001")
-
+        '''
 
         '''
 
@@ -60,7 +61,7 @@ class logAnimator():
         ax2 = fig.add_subplot(2,1,2)
 
         ax1.set_xlim([0, CONFIG['DaisyChainSize']*8])
-        ax1.set_ylim([-2, 2])
+        ax1.set_ylim([-20, 20])
         ax1.set_title("Starboard Track")
 
         ax2.set_xlim([0, CONFIG['DaisyChainSize']*8])
@@ -89,11 +90,18 @@ class logAnimator():
         '''
         x = [i for i in range(CONFIG['DaisyChainSize'] * 8)]
 
+        '''
         starsky_y = self.logs[i]['StarboardSky']
         self.lines[0].set_data(x, starsky_y)
 
         stardown_y = [i for i in self.logs[i]['StarboardDown']]
         self.lines[1].set_data(x, stardown_y)
+        '''
+
+        startrit_y = self.logs[i]['StarboardTrit']
+        self.lines[0].set_data(x, startrit_y)
+        starfins_y = self.logs[i]['StarboardFins']
+        self.lines[1].set_data(x, starfins_y)
 
         portsky_y = self.logs[i]['PortsideSky']
         self.lines[2].set_data(x, portsky_y)

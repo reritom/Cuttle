@@ -1,5 +1,7 @@
 from track_manager import TrackManager
+from fin_manager import FinManager
 import time, sys
+from config import CONFIG
 import _pickle as cPickle
 
 class SimulationDriver():
@@ -19,10 +21,12 @@ class SimulationDriver():
             This method creates a track, and lists all the objects that need running
         '''
         manager = TrackManager()
+        fins = FinManager(CONFIG['DaisyChainSize'])
 
         self.components = {'Manager': manager,
                            'PortDriver': manager.trackDrivers['Portside'],
-                           'StarDriver': manager.trackDrivers['Starboard']}
+                           'StarDriver': manager.trackDrivers['Starboard'],
+                           'FinManager': fins}
 
     def addEvent(self, at, action):
         '''
@@ -61,13 +65,19 @@ class SimulationDriver():
                 this_log['time'] = current_time - start_time
 
                 self.components['Manager'].runRound(delta=delta)
-                StarboardSky, StarboardDown = self.components['StarDriver'].runRound(delta=delta)
-                PortsideSky, PortsideDown = self.components['PortDriver'].runRound(delta=delta)
+                StarboardSky, StarboardDown, StarboardTrit = self.components['StarDriver'].runRound(delta=delta)
+                PortsideSky, PortsideDown, PortsideTrit = self.components['PortDriver'].runRound(delta=delta)
+
+                starboard_fin_positions, portside_fin_positions = self.components['FinManager'].runRound(StarboardTrit, PortsideTrit, delta)
 
                 this_log['StarboardSky'] = StarboardSky
                 this_log['StarboardDown'] = StarboardDown
+                this_log['StarboardTrit'] = StarboardTrit
                 this_log['PortsideSky'] = PortsideSky
                 this_log['PortsideDown'] = PortsideDown
+                this_log['PortsideTrit'] = PortsideTrit
+                this_log['StarboardFins'] = starboard_fin_positions
+                this_log['PortsideFins'] = portside_fin_positions
 
                 #print(this_log)
                 self.logs.append(this_log)
@@ -75,8 +85,12 @@ class SimulationDriver():
                 time_since_last_sample = 0
             else:
                 # Run round without collecting logs
-                for component in self.components:
-                    self.components[component].runRound(delta=delta)
+                self.components['Manager'].runRound(delta=delta)
+                StarboardSky, StarboardDown, StarboardTrit = self.components['StarDriver'].runRound(delta=delta)
+                PortsideSky, PortsideDown, PortsideTrit = self.components['PortDriver'].runRound(delta=delta)
+
+                starboard_fin_positions, portside_fin_positions = self.components['FinManager'].runRound(StarboardTrit, PortsideTrit, delta)
+
                 time_since_last_sample += current_time - previous_time
 
 

@@ -66,13 +66,13 @@ class TrackDriver():
             pass
 
         if self.status == 0:
-            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward'])
+            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward']), copy.deepcopy(self.trit_array)
 
 
         self.time_sls += delta
         if self.time_sls < (1/(self.speed)):
             #print("Time since last shift is ..")
-            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward'])
+            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward']), copy.deepcopy(self.trit_array)
 
         trite = self.wave.getTrite()
 
@@ -88,6 +88,9 @@ class TrackDriver():
             elif trite == -1:
                 self.daisy_arrays['Skyward'].insert(0, 0)
                 self.daisy_arrays['Downward'].insert(0, trite)
+
+            self.trit_array.insert(0, trite)
+            self.trit_array.pop(-1)
 
             carry_bit_sky = self.daisy_arrays['Skyward'].pop(-1)
             carry_bit_down = self.daisy_arrays['Downward'].pop(-1)
@@ -106,6 +109,9 @@ class TrackDriver():
             elif trite == -1:
                 self.daisy_arrays['Skyward'].append(0)
                 self.daisy_arrays['Downward'].append(trite)
+
+            self.trit_array.append(trite)
+            self.trit_array.pop(0)
 
             carry_bit_sky = self.daisy_arrays['Skyward'].pop(0)
             carry_bit_down = self.daisy_arrays['Downward'].pop(0)
@@ -136,10 +142,12 @@ class TrackDriver():
 
             carry_bit_sky = self.daisy_arrays['Skyward'].pop(-1)
             carry_bit_down = self.daisy_arrays['Downward'].pop(-1)
-            '''
-            if self.name == "Starboard":
-                print(self.daisy_arrays['Skyward'])
-            '''
+
+            self.trit_array.insert(center_element, trite)
+            self.trit_array.insert(center_element, trite)
+            self.trit_array.pop(0)
+            self.trit_array.pop(-1)
+
         elif self.direction == 'Ntl':
             # Neutral direction means no movement, end round
             return
@@ -149,7 +157,7 @@ class TrackDriver():
             raise Exception
 
         self.time_sls = 0
-        return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward'])
+        return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward']), copy.deepcopy(self.trit_array)
 
     def setInterrupt(self):
         self.interrupt = True
