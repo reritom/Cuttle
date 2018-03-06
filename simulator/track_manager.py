@@ -1,6 +1,7 @@
 from track_driver import TrackDriver
 from constructor_objects.driver_command_register import DriverCommandRegister
 from constructor_objects.driver_speed_register import DriverSpeedRegister
+from config import Config
 
 class TrackManager():
     '''
@@ -26,7 +27,7 @@ class TrackManager():
         for this_command in commands:
             # Starport commands
             if this_command.startswith('S'):
-                print("Message received for Starboard driver")
+                #print("Message received for Starboard driver")
                 command_register, speed_register = self.createRegisters(this_command)
                 self.trackDrivers['Starboard'].setCommand(command_register.getBinary())
                 self.trackDrivers['Starboard'].setSpeed(speed_register.getBinary())
@@ -35,7 +36,7 @@ class TrackManager():
 
             # Portside commands
             if this_command.startswith('P'):
-                print("Message received for Portside driver")
+                #print("Message received for Portside driver")
                 command_register, speed_register = self.createRegisters(this_command)
                 self.trackDrivers['Portside'].setCommand(command_register.getBinary())
                 self.trackDrivers['Portside'].setSpeed(speed_register.getBinary())
@@ -57,7 +58,7 @@ class TrackManager():
         if speed == 0:
             return command_register, speed_register
         elif speed > 100:
-            print("Speed to high")
+            #print("Speed to high")
             raise Exception
         else:
             command_register.setActive()
@@ -97,7 +98,8 @@ class TrackManager():
 
         if self.incomingSerial is not None:
             if self.incomingSerial != self.previousSerial:
-                print("New incoming message detected")
+                if Config.Debug:
+                    print("New incoming message detected")
                 self.parseSerial()
                 self.previousSerial = self.incomingSerial
             self.incomingSerial = None

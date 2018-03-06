@@ -1,4 +1,4 @@
-from config import CONFIG
+from config import Config
 '''
   Fins are used to make up the tracks.
   It has two binary inputs
@@ -20,9 +20,9 @@ class FinModel():
         '''
             Calculate the new position using the previous bit and the delta, and return the new position
         '''
-        if CONFIG['FinType'] == 'Linear':
+        if Config.FinType == 'Linear':
             self.linearCalc(delta)
-        elif CONFIG['FinType'] == 'Exp':
+        elif Config.FinType == 'Exp':
             pass
 
         self.previous_bit = bit

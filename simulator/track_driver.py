@@ -2,7 +2,7 @@ from sub_components.daisy_chain import DaisyChain
 from constructor_objects.driver_command_register import DriverCommandRegister
 from constructor_objects.driver_speed_register import DriverSpeedRegister
 from constructor_objects.wave import Wave
-from config import CONFIG
+from config import Config
 import copy
 
 class TrackDriver():
@@ -45,20 +45,22 @@ class TrackDriver():
         self.wave.createWave()
 
         # Two daisy chains
-        self.daisies = {'Skyward': DaisyChain(number=CONFIG['DaisyChainSize']),
-                        'Downward': DaisyChain(number=CONFIG['DaisyChainSize'])}
+        self.daisies = {'Skyward': DaisyChain(number=Config.DaisyChainSize),
+                        'Downward': DaisyChain(number=Config.DaisyChainSize)}
 
         # For storing the values of the daisies
-        self.daisy_arrays = {'Skyward': [0 for i in range(CONFIG['DaisyChainSize'] * 8)],
-                             'Downward': [0 for i in range(CONFIG['DaisyChainSize'] * 8)]}
+        self.daisy_arrays = {'Skyward': [0 for i in range(Config.DaisyChainSize * 8)],
+                             'Downward': [0 for i in range(Config.DaisyChainSize * 8)]}
 
-        self.trit_array = [0 for i in range(CONFIG['DaisyChainSize'] * 8)]
+        self.trit_array = [0 for i in range(Config.DaisyChainSize * 8)]
 
     def runRound(self, delta):
         if self.interrupt is not None:
             #Do stuff
-            print(self.name)
-            print("received: " + str(self.command_register.getBinary()))
+            if Config.Debug:
+                print(self.name)
+                print("received: " + str(self.command_register.getBinary()))
+
             self.parseCommand()
             self.interrupt = None
             self.time_sls = 0
@@ -66,13 +68,13 @@ class TrackDriver():
             pass
 
         if self.status == 0:
-            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward']), copy.deepcopy(self.trit_array)
+            return copy.deepcopy(self.trit_array)
 
 
         self.time_sls += delta
         if self.time_sls < (1/(self.speed)):
             #print("Time since last shift is ..")
-            return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward']), copy.deepcopy(self.trit_array)
+            return copy.deepcopy(self.trit_array)
 
         trite = self.wave.getTrite()
 
@@ -157,13 +159,14 @@ class TrackDriver():
             raise Exception
 
         self.time_sls = 0
-        return copy.deepcopy(self.daisy_arrays['Skyward']), copy.deepcopy(self.daisy_arrays['Downward']), copy.deepcopy(self.trit_array)
+        return copy.deepcopy(self.trit_array)
 
     def setInterrupt(self):
         self.interrupt = True
 
     def setCommand(self, comList):
-        print("In driver setCommand, command is " + str(comList))
+        if Config.Debug:
+            print(self.name + " driver received command " + str(comList))
         self.command_register.setBinary(comList)
 
     def setSpeed(self, speedList):

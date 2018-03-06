@@ -1,7 +1,7 @@
 from track_manager import TrackManager
 from fin_manager import FinManager
 import time, sys
-from config import CONFIG
+from config import Config
 import _pickle as cPickle
 
 class SimulationDriver():
@@ -21,7 +21,7 @@ class SimulationDriver():
             This method creates a track, and lists all the objects that need running
         '''
         manager = TrackManager()
-        fins = FinManager(CONFIG['DaisyChainSize'])
+        fins = FinManager(Config.DaisyChainSize)
 
         self.components = {'Manager': manager,
                            'PortDriver': manager.trackDrivers['Portside'],
@@ -60,47 +60,59 @@ class SimulationDriver():
 
             # If it is time to sample
             if time_since_last_sample > self.sampling:
-                print("Time to sample")
                 this_log = dict()
                 this_log['time'] = current_time - start_time
 
                 self.components['Manager'].runRound(delta=delta)
-                StarboardSky, StarboardDown, StarboardTrit = self.components['StarDriver'].runRound(delta=delta)
-                PortsideSky, PortsideDown, PortsideTrit = self.components['PortDriver'].runRound(delta=delta)
+                StarboardTrit = self.components['StarDriver'].runRound(delta=delta)
+                PortsideTrit = self.components['PortDriver'].runRound(delta=delta)
 
                 starboard_fin_positions, portside_fin_positions = self.components['FinManager'].runRound(StarboardTrit, PortsideTrit, delta)
 
-                this_log['StarboardSky'] = StarboardSky
-                this_log['StarboardDown'] = StarboardDown
                 this_log['StarboardTrit'] = StarboardTrit
-                this_log['PortsideSky'] = PortsideSky
-                this_log['PortsideDown'] = PortsideDown
                 this_log['PortsideTrit'] = PortsideTrit
                 this_log['StarboardFins'] = starboard_fin_positions
                 this_log['PortsideFins'] = portside_fin_positions
 
-                #print(this_log)
+                if Config.Debug:
+                    print(this_log)
+
                 self.logs.append(this_log)
-                print(self.logs[-1])
+
+                if not Config.Debug:
+                    percent = ((current_time - start_time)/self.duration)*100
+                    self.progress(percent)
+
                 time_since_last_sample = 0
             else:
                 # Run round without collecting logs
                 self.components['Manager'].runRound(delta=delta)
-                StarboardSky, StarboardDown, StarboardTrit = self.components['StarDriver'].runRound(delta=delta)
-                PortsideSky, PortsideDown, PortsideTrit = self.components['PortDriver'].runRound(delta=delta)
-
-                starboard_fin_positions, portside_fin_positions = self.components['FinManager'].runRound(StarboardTrit, PortsideTrit, delta)
+                StarboardTrit = self.components['StarDriver'].runRound(delta=delta)
+                PortsideTrit = self.components['PortDriver'].runRound(delta=delta)
+                self.components['FinManager'].runRound(StarboardTrit, PortsideTrit, delta)
 
                 time_since_last_sample += current_time - previous_time
-
 
             previous_time = current_time
             current_time = time.time()
 
-        #print(self.logs)
+        print("Run of simulation complete")
 
-        mydict_as_string = cPickle.dumps(self.logs)
-        print(sys.getsizeof(mydict_as_string))
+    def progress(self, percent):
+        '''
+            This method prints a refreshing progress percentage. Any print statement
+            which happens between successive calls to this, need to print something longer than
+            the progress string
+        '''
+        percent = str(int(percent))
+
+        padded_val = percent
+        while len(padded_val) < 3:
+            padded_val = "0" + padded_val
+
+        full_string = padded_val + "% percent complete".format("%")
+        print(full_string, end="\r")
+
 
 
 if __name__ == '__main__':

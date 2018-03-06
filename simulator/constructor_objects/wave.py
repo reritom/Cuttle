@@ -1,3 +1,5 @@
+from config import Config
+
 class Wave():
     def __init__(self):
         self.wave = []
@@ -55,13 +57,13 @@ class Wave():
         self.wave.extend(half_array)
         self.wave.extend(other_half)
 
-        print("Created wave: " + str(self.wave))
+        if Config.Debug:
+            print("Created wave: " + str(self.wave))
 
     def getTrite(self):
         '''
             Return the current bit (-1,0,1) and increment the wave
         '''
-        #print("Getting trite, stage is " + str(self.stage) + " length is " + str(len(self.wave)))
         if self.stage < len(self.wave):
             trite = self.wave[self.stage]
             self.stage = self.stage + 1

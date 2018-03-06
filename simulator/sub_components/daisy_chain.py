@@ -25,22 +25,6 @@ class DaisyChain():
                 bit = carry
                 self.last_carry = carry
 
-        '''
-        # This loop part needs to be moved out of the component
-        else:
-            bit = self.last_carry
-
-            for i in range(len(self.registers)):
-                register = self.registers[i]
-                carry = register.shift(bit)
-                bit = carry
-                self.last_carry = carry
-
-
-        return carry
-        '''
-        return
-
     def getChain(self):
         merged = list()
         for register in self.registers:

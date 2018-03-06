@@ -10,11 +10,8 @@ class DriverSpeedRegister(object):
         '''
             This method receives an int and converts it into an 8 bit list
         '''
-        print("In setSpeed")
         bit_list = self.bitConvert(value)
-        print("Speed converted to: " + str(bit_list))
         if len(bit_list) > 8:
-            print("Speed value greater than 8 bits")
             raise Exception
         else:
             self.speed_array = bit_list
