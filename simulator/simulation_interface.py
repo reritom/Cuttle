@@ -17,7 +17,7 @@ class logAnimator():
         sim = SimulationDriver(duration=Config.Duration, sampling=Config.SampleRate / 1000)
 
         sim.addEvent(0, "SM010:PR100") #Frequency (will default to 10 bit half wave size)
-        sim.addEvent(10, "SR020")
+        sim.addEvent(10, "SR005")
         '''
         sim.addEvent(10, "SW050") #50% pwm
         sim.addEvent(15, "SR050") #Change direction and reduce speed
@@ -30,6 +30,36 @@ class logAnimator():
         sim.runSimulation()
         self.logs = sim.getLogs()
         self.lines = []
+
+    def plotFin(self):
+        '''
+            This method plots the position change of a single fin
+        '''
+        this_fin_position = [log['StarboardFins'][0] for log in self.logs]
+        this_fin_state = [log['StarboardTrit'][0] for log in self.logs]
+        this_x_axis = [i for i in range(len(this_fin_state))]
+
+        fig = plt.figure()
+        ax1 = fig.add_subplot(2,1,1)
+
+        lines = []
+        for i in range(2):
+            lines.append(ax1.plot([], [], lw=2)[0])
+
+        lines[0].set_data(this_x_axis, this_fin_position)
+        lines[1].set_data(this_x_axis, this_fin_state)
+
+        ax1.set_title("Starboard bit 0 progression")
+        ax1.set_xlim([0, len(this_x_axis)])
+        ax1.set_ylim([-20, 20])
+
+        ax1.lines.extend(lines)
+
+        print(len(this_x_axis))
+        print(len(this_fin_state))
+        print(len(this_fin_position))
+
+        plt.show()
 
     def animateLogs(self):
         '''
@@ -93,4 +123,5 @@ class logAnimator():
 if __name__ == '__main__':
     ani = logAnimator()
     ani.runSimulation()
-    ani.animateLogs()
+    ani.plotFin()
+    #ani.animateLogs()
