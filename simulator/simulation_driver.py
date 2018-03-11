@@ -1,5 +1,5 @@
-from track_manager import TrackManager
-from fin_manager import FinManager
+from track.track_manager import TrackManager
+from physical_models.fin.fin_manager import FinManager
 import time, sys
 from config import Config
 import _pickle as cPickle
@@ -108,7 +108,7 @@ class SimulationDriver():
 
         padded_val = percent
         while len(padded_val) < 3:
-            padded_val = "0" + padded_val
+            padded_val = " " + padded_val
 
         full_string = padded_val + "% percent complete".format("%")
         print(full_string, end="\r")

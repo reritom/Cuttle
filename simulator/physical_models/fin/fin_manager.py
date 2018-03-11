@@ -1,4 +1,4 @@
-from fin_model import FinModel
+from physical_models.fin.fin_model import FinModel
 
 class FinManager():
     '''
@@ -23,7 +23,7 @@ class FinManager():
 
     def updateFins(self, starboard_track, portside_track, delta):
         '''
-            This method receives the starboard and portside daisychain arrays, and the time delta, to
+            This method receives the starboard and portside trite arrays, and the time delta, to
             update the fin position calculations, and then returns an array of fin positions for each
         '''
         starboard_fin_positions = []

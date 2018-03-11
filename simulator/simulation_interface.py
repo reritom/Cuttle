@@ -55,10 +55,6 @@ class logAnimator():
 
         ax1.lines.extend(lines)
 
-        print(len(this_x_axis))
-        print(len(this_fin_state))
-        print(len(this_fin_position))
-
         plt.show()
 
     def animateLogs(self):
