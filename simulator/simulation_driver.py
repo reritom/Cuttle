@@ -74,8 +74,6 @@ class SimulationDriver():
                 this_log['StarboardFins'] = starboard_fin_positions
                 this_log['PortsideFins'] = portside_fin_positions
 
-                if Config.Debug:
-                    print(this_log)
 
                 self.logs.append(this_log)
 

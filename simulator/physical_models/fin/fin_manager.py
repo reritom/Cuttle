@@ -16,7 +16,7 @@ class FinManager():
         '''
         for track in self.tracks:
             for i in range(self.number_of_registers * 8):
-                self.tracks[track].append(FinModel())
+                self.tracks[track].append(FinModel(name=str(i)))
 
     def runRound(self, starboard_track, portside_track, delta):
         return self.updateFins(starboard_track, portside_track, delta)
@@ -30,8 +30,11 @@ class FinManager():
         for index, bit in enumerate(starboard_track):
             starboard_fin_positions.append(self.tracks['Starboard'][index].runRound(bit, delta))
 
+
         portside_fin_positions = []
+
         for index, bit in enumerate(portside_track):
             portside_fin_positions.append(self.tracks['Portside'][index].runRound(bit, delta))
+
 
         return starboard_fin_positions, portside_fin_positions

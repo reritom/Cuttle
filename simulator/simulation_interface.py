@@ -16,7 +16,7 @@ class logAnimator():
         print("Starting simulation")
         sim = SimulationDriver(duration=Config.Duration, sampling=Config.SampleRate / 1000)
 
-        sim.addEvent(0, "SM010:PR100") #Frequency (will default to 10 bit half wave size)
+        sim.addEvent(0, "SM010:PR010") #Frequency (will default to 10 bit half wave size)
         sim.addEvent(10, "SR005")
         '''
         sim.addEvent(10, "SW050") #50% pwm
@@ -119,5 +119,5 @@ class logAnimator():
 if __name__ == '__main__':
     ani = logAnimator()
     ani.runSimulation()
-    ani.plotFin()
-    #ani.animateLogs()
+    #ani.plotFin()
+    ani.animateLogs()
